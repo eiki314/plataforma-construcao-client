@@ -1,12 +1,12 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from 'vuetify/es5/util/colors';
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - plataforma-construcao-client',
-    title: 'plataforma-construcao-client',
+    titleTemplate: '%s - Plataforma Construção',
+    title: 'Plataforma Construção',
     htmlAttrs: {
-      lang: 'en',
+      lang: 'pt-BR',
     },
     meta: [
       { charset: 'utf-8' },
@@ -67,4 +67,4 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
-}
+};
