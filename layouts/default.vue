@@ -41,9 +41,23 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
+      <template v-if="loggedIn">
+        Welcome,
+        <th color="blue" style="margin-left: 1ch">{{ user.username }}</th>
+        <v-divider
+          class="mx-3 align-self-center"
+          length="16"
+          thickness="2"
+          vertical
+        />
+        <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+          <v-icon>mdi-menu</v-icon>
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-btn color="primary" text nuxt to="/log-in">Sign In</v-btn>
+        <v-btn color="primary" outlined text nuxt to="/sign-up">Sign Up</v-btn>
+      </template>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -51,7 +65,22 @@
       </v-container>
     </v-main>
     <v-navigation-drawer v-model="rightDrawer" right temporary fixed>
-      <v-list> </v-list>
+      <v-list>
+        <v-list-item
+          v-for="(item, i) in rightItems"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-navigation-drawer>
     <v-footer app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
@@ -78,6 +107,13 @@ export default {
           icon: "mdi-chart-bubble",
           title: "Inspire",
           to: "/inspire",
+        },
+      ],
+      rightItems: [
+        {
+          icon: "mdi-exit-to-app",
+          title: "Sign Out",
+          to: "sign-out",
         },
       ],
       miniVariant: true,
