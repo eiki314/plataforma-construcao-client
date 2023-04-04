@@ -55,8 +55,10 @@
         </v-btn>
       </template>
       <template v-else>
-        <v-btn color="primary" text nuxt to="/log-in">Sign In</v-btn>
-        <v-btn color="primary" outlined text nuxt to="/sign-up">Sign Up</v-btn>
+        <v-btn color="primary" text nuxt :to="{ name: 'login' }">Sign In</v-btn>
+        <v-btn color="primary" outlined text nuxt :to="{ name: 'sign-up' }"
+          >Sign Up</v-btn
+        >
       </template>
     </v-app-bar>
     <v-main>
@@ -109,13 +111,6 @@ export default {
           to: "/inspire",
         },
       ],
-      rightItems: [
-        {
-          icon: "mdi-exit-to-app",
-          title: "Sign Out",
-          to: "sign-out",
-        },
-      ],
       miniVariant: true,
       rightDrawer: false,
       title: "Plataforma Construção",
@@ -128,6 +123,7 @@ export default {
   },
   computed: {
     loggedIn() {
+      console.log(this.$auth);
       return this.$auth.loggedIn;
     },
     user() {
@@ -135,6 +131,22 @@ export default {
     },
     games() {
       return this.$store.state.game.games;
+    },
+    rightItems() {
+      return !this.loggedIn
+        ? []
+        : [
+            {
+              icon: "mdi-account",
+              title: "Profile",
+              to: { name: "users-id", params: { id: this.user.id } },
+            },
+            {
+              icon: "mdi-exit-to-app",
+              title: "Sign Out",
+              to: { name: "sign-out" },
+            },
+          ];
     },
   },
 };

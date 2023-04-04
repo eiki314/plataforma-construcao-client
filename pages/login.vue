@@ -38,7 +38,6 @@
 export default {
   name: "LogIn",
   layout: "full-screen",
-  auth: false,
   data() {
     return {
       login: {
@@ -53,6 +52,11 @@ export default {
       },
     };
   },
+  created() {
+    if (this.$auth.loggedIn) {
+      this.$router.go(-1);
+    }
+  },
   methods: {
     async submit() {
       if (!this.$refs.loginForm.validate()) {
@@ -61,9 +65,10 @@ export default {
       this.alert = null;
       this.loading = true;
       try {
-        await this.$auth.loginWith("cookie", {
+        const response = await this.$auth.loginWith("cookie", {
           data: this.login,
         });
+        this.$auth.setUser(response.data);
         this.alert = {
           type: "success",
           message: "You are now logged in",
