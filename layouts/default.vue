@@ -62,7 +62,7 @@
       </template>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container v-show="!isLoading">
         <Nuxt />
       </v-container>
     </v-main>
@@ -91,6 +91,10 @@
         >Icons by <a target="_blank" href="https://icons8.com">Icons8</a></span
       >
     </v-footer>
+
+    <v-overlay :value="isLoading" color="gray">
+      <Spinner />
+    </v-overlay>
   </v-app>
 </template>
 
@@ -111,19 +115,25 @@ export default {
           to: "/inspire",
         },
       ],
+      loading: true,
       miniVariant: true,
       rightDrawer: false,
       title: "Plataforma Construção",
     };
   },
   async fetch() {
-    if (!this.$store.state.game.games) {
-      await this.$store.dispatch("game/fetchGames");
+    try {
+      this.$store.dispatch("app/startLoading");
+      if (!this.$store.state.game.games) {
+        await this.$store.dispatch("game/fetchGames");
+      }
+    } catch (ex) {
+    } finally {
+      this.$store.dispatch("app/stopLoading");
     }
   },
   computed: {
     loggedIn() {
-      console.log(this.$auth);
       return this.$auth.loggedIn;
     },
     user() {
@@ -131,6 +141,9 @@ export default {
     },
     games() {
       return this.$store.state.game.games;
+    },
+    isLoading() {
+      return this.$store.state.app.isLoading;
     },
     rightItems() {
       return !this.loggedIn

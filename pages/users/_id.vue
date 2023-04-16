@@ -5,6 +5,7 @@
         <v-img
           :src="`data:image/jpg;base64,${user.banner}`"
           height="200"
+          :lazy-src="`https://placehold.co/1000?text=plataforma_construcao`"
         ></v-img>
 
         <v-card-title>
@@ -16,6 +17,7 @@
                   height="200"
                   width="200"
                   class="mx-auto"
+                  :lazy-src="`https://placehold.co/100?text=${user.username}`"
                 ></v-img>
               </v-avatar>
             </v-col>
@@ -37,7 +39,7 @@
             <v-icon start> mdi-lock </v-icon>
             Skills
           </v-tab>
-          <v-tab>
+          <v-tab v-if="isLoggedInUser">
             <v-icon start> mdi-account </v-icon>
             Account
           </v-tab>
@@ -147,8 +149,22 @@ export default {
   },
   async fetch() {
     try {
+      this.$store.dispatch("app/startLoading");
       this.user = await this.$axios.$get(`/api/user/${this.$route.params.id}`);
-    } catch (ex) {}
+    } catch (ex) {
+      if (ex.response.status === 404) {
+        // eslint-disable-next-line nuxt/no-timing-in-fetch-data
+        setTimeout(() => {
+          this.$router.push("/error");
+          this.$store.dispatch("app/stopLoading");
+        }, 2000);
+      }
+    }
+  },
+  computed: {
+    isLoggedInUser() {
+      return this.user.id === this.$auth.user.id;
+    },
   },
   methods: {
     async saveAccount() {
