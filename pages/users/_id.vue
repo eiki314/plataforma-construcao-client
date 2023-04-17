@@ -152,13 +152,9 @@ export default {
       this.$store.dispatch("app/startLoading");
       this.user = await this.$axios.$get(`/api/user/${this.$route.params.id}`);
     } catch (ex) {
-      if (ex.response.status === 404) {
-        // eslint-disable-next-line nuxt/no-timing-in-fetch-data
-        setTimeout(() => {
-          this.$router.push("/error");
-          this.$store.dispatch("app/stopLoading");
-        }, 2000);
-      }
+      if (ex.response.status === 404) this.$router.push("/error");
+    } finally {
+      this.$store.dispatch("app/stopLoading");
     }
   },
   computed: {

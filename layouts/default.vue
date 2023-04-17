@@ -15,6 +15,7 @@
           <v-list-item
             v-for="game in games"
             :key="game.id"
+            :to="{ name: 'games-id', params: { id: game.id } }"
             router
             exact
             :style="`background: ${game.colorHex}`"
