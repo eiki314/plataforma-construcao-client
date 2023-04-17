@@ -15,6 +15,7 @@
           <v-list-item
             v-for="game in games"
             :key="game.id"
+            :to="{ name: 'games-id', params: { id: game.id } }"
             router
             exact
             :style="`background: ${game.colorHex}`"
@@ -55,12 +56,14 @@
         </v-btn>
       </template>
       <template v-else>
-        <v-btn color="primary" text nuxt to="/log-in">Sign In</v-btn>
-        <v-btn color="primary" outlined text nuxt to="/sign-up">Sign Up</v-btn>
+        <v-btn color="primary" text nuxt :to="{ name: 'login' }">Sign In</v-btn>
+        <v-btn color="primary" outlined text nuxt :to="{ name: 'sign-up' }"
+          >Sign Up</v-btn
+        >
       </template>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container v-show="!isLoading">
         <Nuxt />
       </v-container>
     </v-main>
@@ -89,6 +92,10 @@
         >Icons by <a target="_blank" href="https://icons8.com">Icons8</a></span
       >
     </v-footer>
+
+    <v-overlay :value="isLoading" color="gray">
+      <Spinner />
+    </v-overlay>
   </v-app>
 </template>
 
@@ -109,21 +116,21 @@ export default {
           to: "/inspire",
         },
       ],
-      rightItems: [
-        {
-          icon: "mdi-exit-to-app",
-          title: "Sign Out",
-          to: "sign-out",
-        },
-      ],
+      loading: true,
       miniVariant: true,
       rightDrawer: false,
       title: "Plataforma Construção",
     };
   },
   async fetch() {
-    if (!this.$store.state.game.games) {
-      await this.$store.dispatch("game/fetchGames");
+    try {
+      this.$store.dispatch("app/startLoading");
+      if (!this.$store.state.game.games) {
+        await this.$store.dispatch("game/fetchGames");
+      }
+    } catch (ex) {
+    } finally {
+      this.$store.dispatch("app/stopLoading");
     }
   },
   computed: {
@@ -135,6 +142,25 @@ export default {
     },
     games() {
       return this.$store.state.game.games;
+    },
+    isLoading() {
+      return this.$store.state.app.isLoading;
+    },
+    rightItems() {
+      return !this.loggedIn
+        ? []
+        : [
+            {
+              icon: "mdi-account",
+              title: "Profile",
+              to: { name: "users-id", params: { id: this.user.id } },
+            },
+            {
+              icon: "mdi-exit-to-app",
+              title: "Sign Out",
+              to: { name: "sign-out" },
+            },
+          ];
     },
   },
 };

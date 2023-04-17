@@ -9,7 +9,13 @@
           class="d-flex align-content-start flex-wrap bg-surface-variant"
         >
           <v-col v-for="game in games" :key="game.id" sm="12" md="4">
-            <v-card :color="game.colorHex" class="game_card">
+            <v-card
+              :color="game.colorHex"
+              class="game_card"
+              @click.stop="
+                $router.push({ name: 'games-id', params: { id: game.id } })
+              "
+            >
               <v-responsive aspect-ratio="1.5">
                 <v-img
                   cover

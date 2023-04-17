@@ -17,6 +17,8 @@ export default {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
+  ssr: false,
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
@@ -45,11 +47,12 @@ export default {
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
     credentials: true,
+    baseURL: "http://localhost:8080",
     proxy: true,
   },
 
   proxy: {
-    "/api": {
+    "/api/": {
       target: "http://localhost:8080",
     },
   },
@@ -83,23 +86,33 @@ export default {
   },
 
   auth: {
+    cookie: {
+      options: {
+        path: "/api",
+        httpOnly: true,
+      },
+    },
     strategies: {
       cookie: {
-        cookie: {
-          options: {
-            httpOnly: true,
-          },
+        token: {
+          required: false,
+          type: false,
         },
         user: {
           property: false,
+          autoFetch: false,
         },
         endpoints: {
-          login: { url: "api/auth/signin", method: "post" },
-          logout: { url: "api/auth/signout", method: "post" },
-          user: { url: "api/auth/me", method: "get" },
+          login: { url: "/api/auth/signin", method: "post" },
+          logout: { url: "/api/auth/signout", method: "post" },
+          user: { url: "/api/auth/me", method: "get" },
         },
-        redirect: false,
       },
+    },
+    redirect: {
+      login: "/login",
+      logout: "/",
+      home: "/",
     },
   },
 };
